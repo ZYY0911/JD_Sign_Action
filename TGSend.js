@@ -15,10 +15,10 @@
 // module.exports = reMind;
 
 async function tgBotNotify(axios, config, reMindMsg) {
-    axios.defaults.baseURL = `https://api.telegram.org/bot${config.TG_BOT_TOKEN}/sendMessage`;
+    axios.defaults.baseURL = `https://api.telegram.org/bot${config.tgtocken}/sendMessage`;
     let {data: res} = await axios.request({
         method: "post",
-        data: `chat_id=${config.TG_USER_ID}&text=${reMindMsg.text}\n\n${reMindMsg.desp}&disable_web_page_preview=true`,
+        data: `chat_id=${config.tgid}&text=${reMindMsg.text}\n\n${reMindMsg.desp}&disable_web_page_preview=true`,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     });
     let msg = "";
