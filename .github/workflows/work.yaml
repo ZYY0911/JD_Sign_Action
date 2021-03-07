@@ -15,8 +15,8 @@ on:
 env:
   JD_COOKIE: ${{ secrets.JD_COOKIE }}
   PUSH_KEY: ${{ secrets.PUSH_KEY }}
-  TG_BOT_TOKEN: ${{secrets.TG_BOT_TOKEN}}
-  TG_USER_ID : ${{secrets.TG_USER_ID}}
+  TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+  TG_USER_ID: ${{ secrets.TG_USER_ID }}
   UPLOAD_BESULT_DIR: true
 
 jobs:
