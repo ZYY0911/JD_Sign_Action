@@ -64,6 +64,8 @@ function sendNotificationIfNeed() {
 
   // 去除末尾的换行
   let SCKEY = push_key.replace(/[\r\n]/g,"")
+  let TG_BOT_TOKEN = tgbottoken.replace(/[\r\n]/g,"")
+  let TG_USER_ID = tguserid.replace(/[\r\n]/g,"")
 
   // const options ={
   //   uri:  `https://sc.ftqq.com/${SCKEY}.send`,
@@ -72,8 +74,8 @@ function sendNotificationIfNeed() {
   //   method: 'POST'
   // }
   const options ={
-    uri:  `https://api.telegram.org/bot${tgbottoken}/sendMessage`,
-    data: `chat_id=${tguserid}&text=${text}\n\n${desp}&disable_web_page_preview=true`,
+    uri:  `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`,
+    data: `chat_id=${TG_USER_ID}&text=${text}\n\n${desp}&disable_web_page_preview=true`,
     method: 'POST',
     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
   }
