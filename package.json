@@ -20,5 +20,8 @@
     "download": "^8.0.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.6"
+  },
+  "devDependencies": {
+    "axios": "^0.21.1"
   }
 }

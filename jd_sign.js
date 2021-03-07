@@ -6,6 +6,9 @@ const exec = require('child_process').execSync
 const fs = require('fs')
 const rp = require('request-promise')
 const download = require('download')
+let axios = require("axios");
+let TGSend = require("./components/TGSend");
+
 
 // 京东cookie
 const cookie = process.env.JD_COOKIE
@@ -48,52 +51,65 @@ function setupCookie() {
   js_content = js_content.replace(/var Key = ''/, `var Key = '${cookie}'`)
   fs.writeFileSync(js_path, js_content, 'utf8')
 }
-
-function sendNotificationIfNeed() {
+let reMindMsg = {
+  // 消息标题
+  text: "❌ 蘑菇丁签到失败了，请检查 ❌",
+  // 消息主体
+  desp: "请检查账号密码或Token（如果存在）是否失效。其他问题请联系ZYY0911！",
+};
+async function sendNotificationIfNeed() {
 
   if (!push_key) {
-    console.log('执行任务结束!'); return;
+    console.log('执行任务结束!');
+    return;
   }
 
   if (!fs.existsSync(result_path)) {
-    console.log('没有执行结果，任务中断!'); return;
+    console.log('没有执行结果，任务中断!');
+    return;
   }
 
   let text = "京东签到_" + new Date().Format('yyyy.MM.dd');
   let desp = fs.readFileSync(result_path, "utf8")
-
   // 去除末尾的换行
-  let SCKEY = push_key.replace(/[\r\n]/g,"")
-  let TG_BOT_TOKEN = tgbottoken.replace(/[\r\n]/g,"")
-  let TG_USER_ID = tguserid.replace(/[\r\n]/g,"")
-
+  let SCKEY = push_key.replace(/[\r\n]/g, "")
+  let TG_BOT_TOKEN = tgbottoken.replace(/[\r\n]/g, "")
+  let TG_USER_ID = tguserid.replace(/[\r\n]/g, "")
+  let config = {
+    // 用户手机号
+    tgtocken: TG_BOT_TOKEN,
+    // 用户密码
+    tgid: TG_USER_ID
+  };
   // const options ={
   //   uri:  `https://sc.ftqq.com/${SCKEY}.send`,
   //   form: { text, desp },
   //   json: true,
   //   method: 'POST'
   // }
-  const options ={
-    uri:  `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`,
-    data: `chat_id=${TG_USER_ID}&text=${text}\n\n${desp}&disable_web_page_preview=true`,
-    method: 'POST',
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-  }
-
-  rp.post(options).then(res=>{
-    const code = res['errno'];
-    if (code == 0) {
-      console.log("通知发送成功，任务结束！")
-    }
-    else {
-      console.log(res);
-      console.log("通知发送失败，任务中断！")
-      fs.writeFileSync(error_path, JSON.stringify(res), 'utf8')
-    }
-  }).catch((err)=>{
-    console.log("通知发送失败，任务中断！")
-    fs.writeFileSync(error_path, err, 'utf8')
-  })
+  // const options ={
+  //     uri:  `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`,
+  //     data: `chat_id=${TG_USER_ID}&text=${text}\n\n${desp}&disable_web_page_preview=true`,
+  //     method: 'POST',
+  //     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+  //   }
+  //
+  //   rp.post(options).then(res=>{
+  //     const code = res['errno'];
+  //     if (code == 0) {
+  //       console.log("通知发送成功，任务结束！")
+  //     }
+  //     else {
+  //       console.log(res);
+  //       console.log("通知发送失败，任务中断！")
+  //       fs.writeFileSync(error_path, JSON.stringify(res), 'utf8')
+  //     }
+  //   }).catch((err)=>{
+  //     console.log("通知发送失败，任务中断！")
+  //     fs.writeFileSync(error_path, err, 'utf8')
+  //   })
+  let msg = await TGSend(axios, config, reMindMsg);
+  console.log(msg);
 }
 
 function main() {
