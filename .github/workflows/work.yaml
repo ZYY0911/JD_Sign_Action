@@ -11,10 +11,12 @@ on:
     - cron: 0 1 * * *
   watch:
     types: started
-    
+
 env:
   JD_COOKIE: ${{ secrets.JD_COOKIE }}
   PUSH_KEY: ${{ secrets.PUSH_KEY }}
+  TG_BOT_TOKEN: ${{secrets.TG_BOT_TOKEN}}
+  TG_USER_ID : ${{secrets.TG_USER_ID}}
   UPLOAD_BESULT_DIR: true
 
 jobs:
@@ -24,18 +26,18 @@ jobs:
         steps:
             - name: Checkout codes
               uses: actions/checkout@v2
-              
+
             - name: Use Node.js
               uses: actions/setup-node@v1
               with:
                 node-version: '12.x'
-                
+
             - name: Run install
               run: npm install
-              
+
             - name: Run Script
               run: node jd_sign.js
-                
+
             - name: Upload result file
               uses: actions/upload-artifact@master
               if: env.UPLOAD_BESULT_DIR == 'true'

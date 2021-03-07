@@ -11,6 +11,8 @@ const download = require('download')
 const cookie = process.env.JD_COOKIE
 // Server酱SCKEY
 const push_key = process.env.PUSH_KEY
+const tgbottoken = process.env.TG_BOT_TOKEN
+const tguserid = process.env.TG_USER_ID
 
 // 京东脚本文件
 const js_url = 'https://raw.githubusercontent.com/NobyDa/Script/master/JD-DailyBonus/JD_DailyBonus.js'
@@ -63,11 +65,17 @@ function sendNotificationIfNeed() {
   // 去除末尾的换行
   let SCKEY = push_key.replace(/[\r\n]/g,"")
 
+  // const options ={
+  //   uri:  `https://sc.ftqq.com/${SCKEY}.send`,
+  //   form: { text, desp },
+  //   json: true,
+  //   method: 'POST'
+  // }
   const options ={
-    uri:  `https://sc.ftqq.com/${SCKEY}.send`,
-    form: { text, desp },
-    json: true,
-    method: 'POST'
+    uri:  `https://api.telegram.org/bot${tgbottoken}/sendMessage`,
+    data: `chat_id=${tguserid}&text=${text}\n\n${desp}&disable_web_page_preview=true`,
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
   }
 
   rp.post(options).then(res=>{
