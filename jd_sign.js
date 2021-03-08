@@ -125,27 +125,31 @@ function main() {
     // 3、执行脚本
     exec(`node '${js_path}' >> '${result_path}'`);
     // 4、发送推送
+    let text = "京东签到_" + new Date().Format('yyyy.MM.dd');
+    let desp = fs.readFileSync(result_path, "utf8")
     let TG_BOT_TOKEN = tgbottoken.replace(/[\r\n]/g, "")
     let TG_USER_ID = tguserid.replace(/[\r\n]/g, "")
-    let config = {
-      // 用户手机号
-      tgtocken: TG_BOT_TOKEN,
-      // 用户密码
-      tgid: TG_USER_ID
-    };
-    axios.defaults.baseURL = `https://api.telegram.org/bot${config.tgtocken}/sendMessage`;
-    let {data: res} = axios.request({
-      method: "post",
-      data: `chat_id=${config.tgid}&text=${reMindMsg.text}\n\n${reMindMsg.desp}&disable_web_page_preview=true`,
+    const options ={
+      uri:  `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`,
+      data: `chat_id=${TG_USER_ID}&text=${text}\n\n${desp}&disable_web_page_preview=true`,
+      method: 'POST',
       headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    });
-    let msg = "";
-    if (res.ok) {
-      msg = "发送提醒成功！";
-    } else {
-      msg = "发送提醒失败！" + res.description;
     }
-    console.log(msg);
+
+    rp.post(options).then(res=>{
+      if (res.ok) {
+        console.log("通知发送成功，任务结束！")
+      }
+      else {
+        console.log(res);
+        console.log("通知发送失败，任务中断！")
+        fs.writeFileSync(error_path, JSON.stringify(res), 'utf8')
+      }
+    }).catch((err)=>{
+      console.log(err)
+      console.log("通知发送失败，任务中断！")
+      fs.writeFileSync(error_path, err, 'utf8')
+    })
   }).catch((err)=>{
     console.log('脚本文件下载失败，任务中断！');
     fs.writeFileSync(error_path, err, 'utf8')
