@@ -134,7 +134,7 @@ function main() {
         let desp_2 = desp.replace("+", "").replace("\n", "").replace("'","").replace(/[\r\n]/g, "");
         console.log(desp_2)
         const options = {
-            uri: `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`,
+            url: `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`,
             data: `chat_id=${TG_USER_ID}&text=${text}${desp_2.toString()}&disable_web_page_preview=true`,
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
