@@ -125,7 +125,27 @@ function main() {
     // 3、执行脚本
     exec(`node '${js_path}' >> '${result_path}'`);
     // 4、发送推送
-    sendNotificationIfNeed() 
+    let TG_BOT_TOKEN = tgbottoken.replace(/[\r\n]/g, "")
+    let TG_USER_ID = tguserid.replace(/[\r\n]/g, "")
+    let config = {
+      // 用户手机号
+      tgtocken: TG_BOT_TOKEN,
+      // 用户密码
+      tgid: TG_USER_ID
+    };
+    axios.defaults.baseURL = `https://api.telegram.org/bot${config.tgtocken}/sendMessage`;
+    let {data: res} = axios.request({
+      method: "post",
+      data: `chat_id=${config.tgid}&text=${reMindMsg.text}\n\n${reMindMsg.desp}&disable_web_page_preview=true`,
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    });
+    let msg = "";
+    if (res.ok) {
+      msg = "发送提醒成功！";
+    } else {
+      msg = "发送提醒失败！" + res.description;
+    }
+    console.log(msg);
   }).catch((err)=>{
     console.log('脚本文件下载失败，任务中断！');
     fs.writeFileSync(error_path, err, 'utf8')
