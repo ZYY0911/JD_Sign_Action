@@ -86,8 +86,7 @@ async function sendNotificationIfNeed() {
     };
     reMindMsg.text = text;
     reMindMsg.desp = desp;
-    let msg = await TGSend(axios, config, reMindMsg);
-    console.log(msg)
+    await TGSend(axios, config, reMindMsg);
     // const options ={
     //   uri:  `https://sc.ftqq.com/${SCKEY}.send`,
     //   form: { text, desp },
