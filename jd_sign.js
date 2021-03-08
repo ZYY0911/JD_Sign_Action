@@ -7,7 +7,7 @@ const fs = require('fs')
 const rp = require('request-promise')
 const download = require('download')
 let axios = require("axios");
-let TGSend = require("./components/TGSend");
+let TGSend = require("TGSend");
 
 
 
