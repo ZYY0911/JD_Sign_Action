@@ -132,7 +132,7 @@ function main() {
         let TG_BOT_TOKEN = tgbottoken.replace(/[\r\n]/g, "");
         let TG_USER_ID = tguserid.replace(/[\r\n]/g, "");
         let desp_2 = desp.replace("+", "").replace("\n", "").replace("'","")
-
+        console.log(desp_2)
         const options = {
             uri: `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`,
             data: `chat_id=${TG_USER_ID}&text=${text}${desp_2}&disable_web_page_preview=true`,
@@ -144,7 +144,6 @@ function main() {
             if (res.ok) {
                 console.log("通知发送成功，任务结束！")
             } else {
-                console.log(res);
                 console.log("通知发送失败，任务中断！")
                 fs.writeFileSync(error_path, JSON.stringify(res), 'utf8')
             }
