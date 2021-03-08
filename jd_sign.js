@@ -7,7 +7,6 @@ const fs = require('fs')
 const rp = require('request-promise')
 const download = require('download')
 let axios = require("axios");
-let TGSend = require("TGSend");
 
 
 // 京东cookie
