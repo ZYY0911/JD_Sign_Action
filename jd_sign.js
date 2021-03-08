@@ -7,6 +7,8 @@ const fs = require('fs')
 const rp = require('request-promise')
 const download = require('download')
 let axios = require("axios");
+let TGSend = require("./components/TGSend");
+
 
 
 // 京东cookie
@@ -53,9 +55,9 @@ function setupCookie() {
 
 let reMindMsg = {
     // 消息标题
-    text: "❌ 蘑菇丁签到失败了，请检查 ❌",
+    text: "❌ 京东签到_，请检查 ❌",
     // 消息主体
-    desp: "请检查账号密码或Token（如果存在）是否失效。其他问题请联系ZYY0911！",
+    desp: "请检查账号密码或Token（如果存在）是否失效。！",
 };
 
 async function sendNotificationIfNeed() {
@@ -71,7 +73,7 @@ async function sendNotificationIfNeed() {
     }
 
     let text = "京东签到_" + new Date().Format('yyyy.MM.dd');
-    let desp = fs.readFileSync(result_path, "utf8")
+    let desp = fs.readFileSync(result_path, "utf8").replace(/[\r\n]/g, "");
     // 去除末尾的换行
     let SCKEY = push_key.replace(/[\r\n]/g, "")
     let TG_BOT_TOKEN = tgbottoken.replace(/[\r\n]/g, "")
@@ -82,6 +84,10 @@ async function sendNotificationIfNeed() {
         // 用户密码
         tgid: TG_USER_ID
     };
+    reMindMsg.text = text;
+    reMindMsg.desp = desp;
+    let msg = await TGSend(axios, config, reMindMsg);
+    console.log(msg)
     // const options ={
     //   uri:  `https://sc.ftqq.com/${SCKEY}.send`,
     //   form: { text, desp },
@@ -109,8 +115,6 @@ async function sendNotificationIfNeed() {
     //     console.log("通知发送失败，任务中断！")
     //     fs.writeFileSync(error_path, err, 'utf8')
     //   })
-    let msg = await TGSend(axios, config, reMindMsg);
-    console.log(msg);
 }
 
 function main() {
@@ -127,31 +131,32 @@ function main() {
         // 3、执行脚本
         exec(`node '${js_path}' >> '${result_path}'`);
         // 4、发送推送
-        let text = "京东签到_" + new Date().Format('yyyy.MM.dd');
-        let desp = fs.readFileSync(result_path, "utf8");
-        let TG_BOT_TOKEN = tgbottoken.replace(/[\r\n]/g, "");
-        let TG_USER_ID = tguserid.replace(/[\r\n]/g, "");
-        let desp_2 = desp.replace("+", "").replace("\n", "").replace("'","")
-        console.log(desp_2)
-        const options = {
-            uri: `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`,
-            data: `chat_id=${TG_USER_ID}&text=${text}${desp_2}&disable_web_page_preview=true`,
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        }
-
-        rp.post(options).then(res => {
-            if (res.ok) {
-                console.log("通知发送成功，任务结束！")
-            } else {
-                console.log("通知发送失败，任务中断！")
-                fs.writeFileSync(error_path, JSON.stringify(res), 'utf8')
-            }
-        }).catch((err) => {
-            console.log(err)
-            console.log("通知发送失败，任务中断！")
-            fs.writeFileSync(error_path, err, 'utf8')
-        })
+        sendNotificationIfNeed()
+        // let text = "京东签到_" + new Date().Format('yyyy.MM.dd');
+        // let desp = fs.readFileSync(result_path, "utf8");
+        // let TG_BOT_TOKEN = tgbottoken.replace(/[\r\n]/g, "");
+        // let TG_USER_ID = tguserid.replace(/[\r\n]/g, "");
+        // let desp_2 = desp.replace("+", "").replace("\n", "").replace("'","").replace(/[\r\n]/g, "");
+        // console.log(desp_2)
+        // const options = {
+        //     url: `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`,
+        //     data: `chat_id=${TG_USER_ID}&text=${text}${desp_2.toString()}&disable_web_page_preview=true`,
+        //     method: 'POST',
+        //     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        // }
+        //
+        // rp.post(options).then(res => {
+        //     if (res.ok) {
+        //         console.log("通知发送成功，任务结束！")
+        //     } else {
+        //         console.log("通知发送失败，任务中断！")
+        //         fs.writeFileSync(error_path, JSON.stringify(res), 'utf8')
+        //     }
+        // }).catch((err) => {
+        //     console.log(err)
+        //     console.log("通知发送失败，任务中断！")
+        //     fs.writeFileSync(error_path, err, 'utf8')
+        // })
     }).catch((err) => {
         console.log('脚本文件下载失败，任务中断！');
         fs.writeFileSync(error_path, err, 'utf8')
