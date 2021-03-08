@@ -131,7 +131,7 @@ function main() {
         let desp = fs.readFileSync(result_path, "utf8");
         let TG_BOT_TOKEN = tgbottoken.replace(/[\r\n]/g, "");
         let TG_USER_ID = tguserid.replace(/[\r\n]/g, "");
-        let desp_2 = desp.replace("+", "").replace("\n", "").replace("'","")
+        let desp_2 = desp.replace("+", "").replace("\n", "").replace("'","").replace(/[\r\n]/g, "");
         console.log(desp_2)
         const options = {
             uri: `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`,
